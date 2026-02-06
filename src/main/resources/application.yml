@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: jjalb
+
+  r2dbc:
+    url: ${DB_URL:r2dbc:postgresql://localhost:5432/jjalb}
+    username: ${DB_USERNAME:jjalb}
+    password: ${DB_PASSWORD:jjalb}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  sql:
+    init:
+      mode: always
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
