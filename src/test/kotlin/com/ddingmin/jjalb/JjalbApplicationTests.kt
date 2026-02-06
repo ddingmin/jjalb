@@ -1,13 +1,14 @@
 package com.ddingmin.jjalb
 
-import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
+import io.kotest.core.annotation.Ignored
+import io.kotest.core.spec.style.DescribeSpec
 
-@SpringBootTest
-class JjalbApplicationTests {
+@Ignored
+class JjalbApplicationTests : DescribeSpec({
 
-    @Test
-    fun contextLoads() {
+    describe("contextLoads") {
+        it("애플리케이션 컨텍스트가 로드된다") {
+            // Requires PostgreSQL and Redis
+        }
     }
-
-}
+})
