@@ -10,19 +10,32 @@ URL 단축 + 클릭 통계 서비스 (숏링크). Spring WebFlux 리액티브 �
 
 - `./gradlew build` — 빌드
 - `./gradlew clean build` — 클린 빌드
-- `./gradlew bootRun` — 애플리케이션 실행
+- `./gradlew bootRun` — 애플리케이션 실행 (PostgreSQL + Redis 필요)
+- `docker compose up -d` — 로컬 인프라 실행
 - `./gradlew test` — 전체 테스트
 - `./gradlew test --tests "com.ddingmin.jjalb.SomeTest"` — 단일 테스트 클래스
 - `./gradlew test --tests "com.ddingmin.jjalb.SomeTest.someMethod"` — 단일 테스트 메서드
 
 ## 기술 스택 & 아키텍처
 
-- Spring Boot 4.0.2, Kotlin 2.2.21, Java 21
+- Spring Boot 4.0.2, Kotlin 2.2.21, Java 21, Gradle 9.3.0
 - 리액티브 스택: WebFlux + R2DBC(PostgreSQL) + Redis Reactive
 - 코루틴: kotlinx-coroutines-reactor
-- JPA all-open: Entity, MappedSuperclass, Embeddable 클래스를 open으로 처리
-- Gradle 9.3.0
+- R2DBC 엔티티: data class + @Table/@Id (spring-data-relational)
+- 테스트: Kotest (DescribeSpec) + MockK
 - 베이스 패키지: `com.ddingmin.jjalb`
+
+## 아키텍처 패턴
+
+- 값 객체: `OriginalUrl`, `ShortCode` — 도메인 불변식 보장
+- 전략 패턴: `CodeGenerator` 인터페이스 → `Base62CodeGenerator` 구현
+- 이벤트 기반: 클릭 기록은 `ClickEvent` → `@EventListener`로 비동기 처리
+- 캐시 추상화: `LinkCacheRepository` 인터페이스 → `RedisLinkCacheRepository` 구현
+
+## 설정
+
+- `application.yml`의 민감 정보는 환경 변수로 주입 (기본값은 로컬 개발용)
+- 환경 변수: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `REDIS_HOST`, `REDIS_PORT`, `APP_BASE_URL`
 
 ## Git 컨벤션
 
