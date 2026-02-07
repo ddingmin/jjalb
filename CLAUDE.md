@@ -22,20 +22,22 @@ URL 단축 + 클릭 통계 서비스 (숏링크). Spring WebFlux 리액티브 �
 - 리액티브 스택: WebFlux + R2DBC(PostgreSQL) + Redis Reactive
 - 코루틴: kotlinx-coroutines-reactor
 - R2DBC 엔티티: data class + @Table/@Id (spring-data-relational)
-- 테스트: Kotest (DescribeSpec) + MockK
+- 테스트: Kotest (DescribeSpec) + MockK, 컨트롤러 테스트는 JUnit 5 + @WebFluxTest
 - 베이스 패키지: `com.ddingmin.jjalb`
 
 ## 아키텍처 패턴
 
 - 값 객체: `OriginalUrl`, `ShortCode` — 도메인 불변식 보장
-- 전략 패턴: `CodeGenerator` 인터페이스 → `Base62CodeGenerator` 구현
-- 이벤트 기반: 클릭 기록은 `ClickEvent` → `@EventListener`로 비동기 처리
+  - `OriginalUrl`: 프로토콜 화이트리스트(http/https), 내부 IP 차단, 길이 제한(2048자), URI 형식 검증
+- 전략 패턴: `CodeGenerator` 인터페이스 → `SqidsCodeGenerator` 구현 (ID + salt 기반 Sqids 인코딩)
+- 이벤트 기반: 클릭 기록은 `ClickEvent` → `@EventListener` + `SupervisorJob` 코루틴 스코프로 비동기 처리
 - 캐시 추상화: `LinkCacheRepository` 인터페이스 → `RedisLinkCacheRepository` 구현
+- 글로벌 예외 핸들러: `@RestControllerAdvice`로 일관된 에러 응답 (`ErrorResponse`)
 
 ## 설정
 
 - `application.yml`의 민감 정보는 환경 변수로 주입 (기본값은 로컬 개발용)
-- 환경 변수: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `REDIS_HOST`, `REDIS_PORT`, `APP_BASE_URL`
+- 환경 변수: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `REDIS_HOST`, `REDIS_PORT`, `APP_BASE_URL`, `SQIDS_ALPHABET`, `SQIDS_MIN_LENGTH`
 
 ## Git 컨벤션
 
