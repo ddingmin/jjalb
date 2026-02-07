@@ -4,5 +4,4 @@ import com.ddingmin.jjalb.domain.ShortCode
 
 interface CodeGenerator {
     fun generate(id: Long): ShortCode
-    fun tempCode(): ShortCode
 }

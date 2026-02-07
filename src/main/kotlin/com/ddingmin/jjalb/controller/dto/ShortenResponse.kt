@@ -9,11 +9,13 @@ data class ShortenResponse(
 ) {
 
     companion object {
-        fun from(link: Link, baseUrl: String): ShortenResponse =
-            ShortenResponse(
-                code = link.code,
-                shortUrl = "$baseUrl/${link.code}",
+        fun from(link: Link, baseUrl: String): ShortenResponse {
+            val code = link.shortCode.value
+            return ShortenResponse(
+                code = code,
+                shortUrl = "$baseUrl/$code",
                 originalUrl = link.originalUrl
             )
+        }
     }
 }

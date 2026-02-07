@@ -17,8 +17,7 @@ class LinkService(
 ) {
 
     suspend fun shorten(originalUrl: OriginalUrl): Link {
-        val tempCode = codeGenerator.tempCode()
-        var link = linkRepository.save(Link.create(tempCode, originalUrl))
+        var link = linkRepository.save(Link.createPending(originalUrl))
 
         val generatedCode = codeGenerator.generate(link.id!!)
         link = linkRepository.save(link.assignCode(generatedCode))

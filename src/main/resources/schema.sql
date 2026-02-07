@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS link (
     id           BIGSERIAL PRIMARY KEY,
-    code         VARCHAR(10) NOT NULL UNIQUE,
+    code         VARCHAR(10) UNIQUE,
     original_url TEXT NOT NULL,
     created_at   TIMESTAMP NOT NULL DEFAULT NOW()
 );

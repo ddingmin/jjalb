@@ -28,29 +28,27 @@ class LinkServiceTest : DescribeSpec({
     beforeEach { clearAllMocks() }
 
     describe("shorten") {
-        it("임시 코드로 저장 후 ID 기반 코드로 갱신한다") {
-            val tempCode = ShortCode("_abc12345")
-            val generatedCode = ShortCode("1")
+        it("ID 기반으로 Sqids 코드를 생성하고 링크를 저장한다") {
             val originalUrl = OriginalUrl("https://google.com")
+            val pendingLink = Link(id = 1L, code = null, originalUrl = "https://google.com")
+            val generatedCode = ShortCode("Xr04lY")
+            val finalLink = Link(id = 1L, code = "Xr04lY", originalUrl = "https://google.com")
 
-            val tempLink = Link(id = 1L, code = "_abc12345", originalUrl = "https://google.com")
-            val finalLink = Link(id = 1L, code = "1", originalUrl = "https://google.com")
-
-            coEvery { codeGenerator.tempCode() } returns tempCode
+            coEvery { linkRepository.save(match { it.code == null }) } returns pendingLink
             coEvery { codeGenerator.generate(1L) } returns generatedCode
-            coEvery { linkRepository.save(any()) } returnsMany listOf(tempLink, finalLink)
+            coEvery { linkRepository.save(match { it.code == "Xr04lY" }) } returns finalLink
 
             val result = linkService.shorten(originalUrl)
 
-            result.code shouldBe "1"
+            result.code shouldBe "Xr04lY"
             coVerify(exactly = 2) { linkRepository.save(any()) }
-            coVerify { linkCacheRepository.put(ShortCode("1"), originalUrl) }
+            coVerify { linkCacheRepository.put(ShortCode("Xr04lY"), originalUrl) }
         }
     }
 
     describe("redirect") {
         it("URL을 반환하고 ClickEvent를 발행한다") {
-            val code = ShortCode("abc")
+            val code = ShortCode("abc12345")
             val cachedUrl = OriginalUrl("https://google.com")
             val eventSlot = slot<ClickEvent>()
 
@@ -60,15 +58,15 @@ class LinkServiceTest : DescribeSpec({
             val result = linkService.redirect(code, "https://twitter.com", "Mozilla/5.0")
 
             result shouldBe cachedUrl
-            eventSlot.captured.code shouldBe "abc"
+            eventSlot.captured.code shouldBe "abc12345"
             eventSlot.captured.referrer shouldBe "https://twitter.com"
             eventSlot.captured.userAgent shouldBe "Mozilla/5.0"
         }
 
         it("존재하지 않는 코드이면 예외를 던진다") {
-            val code = ShortCode("unknown")
+            val code = ShortCode("unknown1")
             coEvery { linkCacheRepository.get(code) } returns null
-            coEvery { linkRepository.findByCode("unknown") } returns null
+            coEvery { linkRepository.findByCode("unknown1") } returns null
 
             shouldThrow<NoSuchElementException> {
                 linkService.redirect(code, null, null)
@@ -79,7 +77,7 @@ class LinkServiceTest : DescribeSpec({
     }
 
     describe("resolve") {
-        val code = ShortCode("abc")
+        val code = ShortCode("abc12345")
 
         context("캐시에 있을 때") {
             it("캐시에서 URL을 반환한다") {
@@ -94,9 +92,9 @@ class LinkServiceTest : DescribeSpec({
 
         context("캐시에 없고 DB에 있을 때") {
             it("DB에서 조회 후 캐시에 저장하고 반환한다") {
-                val link = Link(id = 1L, code = "abc", originalUrl = "https://google.com")
+                val link = Link(id = 1L, code = "abc12345", originalUrl = "https://google.com")
                 coEvery { linkCacheRepository.get(code) } returns null
-                coEvery { linkRepository.findByCode("abc") } returns link
+                coEvery { linkRepository.findByCode("abc12345") } returns link
 
                 val result = linkService.resolve(code)
 
@@ -108,7 +106,7 @@ class LinkServiceTest : DescribeSpec({
         context("캐시에도 DB에도 없을 때") {
             it("null을 반환한다") {
                 coEvery { linkCacheRepository.get(code) } returns null
-                coEvery { linkRepository.findByCode("abc") } returns null
+                coEvery { linkRepository.findByCode("abc12345") } returns null
 
                 val result = linkService.resolve(code)
 

@@ -8,13 +8,13 @@ import java.time.LocalDateTime
 data class Link(
     @Id
     val id: Long? = null,
-    val code: String,
+    val code: String? = null,
     val originalUrl: String,
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
 
     val shortCode: ShortCode
-        get() = ShortCode(code)
+        get() = ShortCode(code ?: throw IllegalStateException("Code not yet assigned"))
 
     val original: OriginalUrl
         get() = OriginalUrl(originalUrl)
@@ -23,6 +23,9 @@ data class Link(
         copy(code = shortCode.value)
 
     companion object {
+        fun createPending(originalUrl: OriginalUrl): Link =
+            Link(originalUrl = originalUrl.value)
+
         fun create(code: ShortCode, originalUrl: OriginalUrl): Link =
             Link(code = code.value, originalUrl = originalUrl.value)
     }

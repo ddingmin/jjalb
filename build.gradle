@@ -28,10 +28,12 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
     implementation 'tools.jackson.module:jackson-module-kotlin'
+    implementation 'org.sqids:sqids:0.1.0'
 
     runtimeOnly 'org.postgresql:r2dbc-postgresql'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-webflux-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
