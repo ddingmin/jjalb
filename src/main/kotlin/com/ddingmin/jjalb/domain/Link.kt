@@ -10,6 +10,7 @@ data class Link(
     val id: Long? = null,
     val code: String? = null,
     val originalUrl: String,
+    val author: String? = null,
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
 
@@ -23,10 +24,10 @@ data class Link(
         copy(code = shortCode.value)
 
     companion object {
-        fun createPending(originalUrl: OriginalUrl): Link =
-            Link(originalUrl = originalUrl.value)
+        fun createPending(originalUrl: OriginalUrl, author: String? = null): Link =
+            Link(originalUrl = originalUrl.value, author = author)
 
-        fun create(code: ShortCode, originalUrl: OriginalUrl): Link =
-            Link(code = code.value, originalUrl = originalUrl.value)
+        fun create(code: ShortCode, originalUrl: OriginalUrl, author: String? = null): Link =
+            Link(code = code.value, originalUrl = originalUrl.value, author = author)
     }
 }

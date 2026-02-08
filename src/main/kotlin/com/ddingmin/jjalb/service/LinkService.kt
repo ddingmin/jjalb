@@ -16,8 +16,8 @@ class LinkService(
     private val eventPublisher: ApplicationEventPublisher
 ) {
 
-    suspend fun shorten(originalUrl: OriginalUrl): Link {
-        var link = linkRepository.save(Link.createPending(originalUrl))
+    suspend fun shorten(originalUrl: OriginalUrl, author: String? = null): Link {
+        var link = linkRepository.save(Link.createPending(originalUrl, author))
 
         val generatedCode = codeGenerator.generate(link.id!!)
         link = linkRepository.save(link.assignCode(generatedCode))
