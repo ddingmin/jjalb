@@ -1,12 +1,17 @@
 package com.ddingmin.jjalb.controller
 
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
 
-data class ErrorResponse(val message: String)
+@Schema(description = "에러 응답")
+data class ErrorResponse(
+    @Schema(description = "에러 메시지", example = "Only http/https URLs are allowed")
+    val message: String
+)
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
