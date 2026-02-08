@@ -22,6 +22,7 @@ URL 단축 + 클릭 통계 서비스 (숏링크). Spring WebFlux 리액티브 �
 - 리액티브 스택: WebFlux + R2DBC(PostgreSQL) + Redis Reactive
 - 코루틴: kotlinx-coroutines-reactor
 - R2DBC 엔티티: data class + @Table/@Id (spring-data-relational)
+- API 문서: springdoc-openapi 3.0.1 (Scalar UI)
 - 테스트: Kotest (DescribeSpec) + MockK, 컨트롤러 테스트는 JUnit 5 + @WebFluxTest
 - 베이스 패키지: `com.ddingmin.jjalb`
 
@@ -33,6 +34,7 @@ URL 단축 + 클릭 통계 서비스 (숏링크). Spring WebFlux 리액티브 �
 - 이벤트 기반: 클릭 기록은 `ClickEvent` → `@EventListener` + `SupervisorJob` 코루틴 스코프로 비동기 처리
 - 캐시 추상화: `LinkCacheRepository` 인터페이스 → `RedisLinkCacheRepository` 구현
 - 글로벌 예외 핸들러: `@RestControllerAdvice`로 일관된 에러 응답 (`ErrorResponse`)
+- API 문서: springdoc-openapi + Scalar UI (`/api/docs`), OpenAPI JSON (`/v3/api-docs`)
 
 ## 설정
 
