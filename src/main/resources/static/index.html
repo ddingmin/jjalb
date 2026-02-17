@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>jjalb</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --text-heading: #fff;
+            --text-muted: #888;
+            --text-faint: #666;
+            --text-placeholder: #555;
+            --surface: #141414;
+            --surface-raised: #1a1a1a;
+            --hero-bg: #111;
+            --hero-border: #1e1e1e;
+            --border: #2a2a2a;
+            --border-hover: #444;
+            --border-focus: #555;
+            --focus-glow: rgba(255, 255, 255, 0.04);
+            --selection-bg: rgba(255, 255, 255, 0.15);
+            --selection-text: #fff;
+            --btn-bg: #fff;
+            --btn-text: #0a0a0a;
+            --btn-focus-outline: #fff;
+            --link-success: #4ade80;
+            --error: #f87171;
+            --code-text: #c8c8c8;
+            --scrollbar-thumb: #333;
+            --badge-soon-bg: rgba(245, 158, 11, 0.15);
+            --badge-soon-text: #f59e0b;
+            --badge-soon-border: rgba(245, 158, 11, 0.3);
+            --autofill-bg: #1a1a1a;
+            color-scheme: dark;
+        }
+
+        :root[data-theme="light"] {
+            --bg: #fafafa;
+            --text: #333;
+            --text-heading: #111;
+            --text-muted: #666;
+            --text-faint: #999;
+            --text-placeholder: #aaa;
+            --surface: #fff;
+            --surface-raised: #f5f5f5;
+            --hero-bg: #f0f0f0;
+            --hero-border: #e0e0e0;
+            --border: #e0e0e0;
+            --border-hover: #bbb;
+            --border-focus: #999;
+            --focus-glow: rgba(0, 0, 0, 0.06);
+            --selection-bg: rgba(0, 0, 0, 0.12);
+            --selection-text: #000;
+            --btn-bg: #111;
+            --btn-text: #fff;
+            --btn-focus-outline: #111;
+            --link-success: #16a34a;
+            --error: #dc2626;
+            --code-text: #444;
+            --scrollbar-thumb: #ccc;
+            --badge-soon-bg: rgba(245, 158, 11, 0.1);
+            --badge-soon-text: #b45309;
+            --badge-soon-border: rgba(245, 158, 11, 0.3);
+            --autofill-bg: #f5f5f5;
+            color-scheme: light;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        ::selection {
+            background: var(--selection-bg);
+            color: var(--selection-text);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem 2rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            margin-top: 0.5rem;
+        }
+
+        .theme-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            user-select: none;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            cursor: pointer;
+            padding: 0;
+            transition: border-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--border-hover);
+        }
+
+        .theme-toggle:focus-visible {
+            outline: 2px solid var(--border-focus);
+            outline-offset: 2px;
+        }
+
+        .theme-toggle .toggle-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        [data-theme="light"] .theme-toggle .toggle-knob {
+            transform: translateX(22px);
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        section h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        /* Shorten section hero */
+        .shorten-section {
+            background: var(--hero-bg);
+            border: 1px solid var(--hero-border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .shorten-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        #shortenForm {
+            margin-bottom: 0.75rem;
+        }
+
+        .shorten-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .shorten-form input,
+        .author-input {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .shorten-form input {
+            flex: 1;
+            min-width: 0;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        .author-input {
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .shorten-form input::placeholder,
+        .author-input::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        .shorten-form input:focus,
+        .author-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--focus-glow);
+        }
+
+        /* Override browser autofill styles */
+        .shorten-form input:-webkit-autofill,
+        .shorten-form input:-webkit-autofill:hover,
+        .shorten-form input:-webkit-autofill:focus,
+        .author-input:-webkit-autofill,
+        .author-input:-webkit-autofill:hover,
+        .author-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: var(--text);
+            -webkit-box-shadow: 0 0 0 1000px var(--autofill-bg) inset;
+            border: 1px solid var(--border);
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .shorten-form button {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .shorten-form button:hover {
+            opacity: 0.85;
+        }
+
+        .shorten-form button:active {
+            transform: scale(0.97);
+        }
+
+        .shorten-form button:focus-visible {
+            outline: 2px solid var(--btn-focus-outline);
+            outline-offset: 2px;
+        }
+
+        .shorten-form button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 480px) {
+            .shorten-form {
+                flex-direction: column;
+            }
+
+            .shorten-form button {
+                padding: 0.75rem;
+            }
+
+            .shorten-section {
+                padding: 1.25rem;
+            }
+        }
+
+        /* Result slide-in animation */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shorten-result {
+            display: none;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .shorten-result.visible {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        .shorten-result a {
+            color: var(--link-success);
+            text-decoration: none;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .shorten-result a:hover {
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 0.75rem;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+
+        .copy-btn:focus-visible {
+            outline: 2px solid var(--border-focus);
+            outline-offset: 2px;
+        }
+
+        .shorten-error {
+            display: none;
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .shorten-error.visible {
+            display: block;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        /* Code blocks */
+        .code-block {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s;
+        }
+
+        .code-block:hover {
+            border-color: var(--scrollbar-thumb);
+        }
+
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            color: var(--text-faint);
+            font-family: inherit;
+            font-size: 0.7rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s, border-color 0.2s, color 0.2s;
+        }
+
+        .code-block:hover .code-copy-btn {
+            opacity: 1;
+        }
+
+        .code-copy-btn:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+
+        .code-block::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 3px;
+        }
+
+        .code-block pre {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--code-text);
+            white-space: pre;
+        }
+
+        .code-label {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .card:not(.card--soon):hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card a:focus-visible {
+            outline: 2px solid var(--border-focus);
+            outline-offset: -2px;
+            border-radius: 6px;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            margin-bottom: 0.4rem;
+        }
+
+        .card p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .card--soon {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        .badge--soon {
+            background: var(--badge-soon-bg);
+            color: var(--badge-soon-text);
+            border: 1px solid var(--badge-soon-border);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            color: var(--text-faint);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>jjalb</h1>
+                <p>URL shortener with click analytics</p>
+            </div>
+            <div class="theme-toggle-wrap">
+                <span class="theme-label" id="themeLabel">Dark</span>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="toggle-knob"></span>
+                </button>
+            </div>
+        </header>
+
+        <section class="shorten-section">
+            <h2>Shorten a Link</h2>
+            <form id="shortenForm">
+                <div class="shorten-form">
+                    <input type="text" id="urlInput" placeholder="example.com/very/long/path" autocomplete="off" required>
+                    <button type="submit" id="shortenBtn">Shorten</button>
+                </div>
+                <input type="text" id="authorInput" class="author-input" placeholder="Author (optional)" autocomplete="off">
+            </form>
+            <div class="shorten-result" id="shortenResult">
+                <a id="shortLink" href="#" target="_blank"></a>
+                <button class="copy-btn" id="copyBtn">Copy</button>
+            </div>
+            <div class="shorten-error" id="shortenError"></div>
+        </section>
+
+        <section>
+            <h2>API</h2>
+            <div class="code-label">Request</div>
+            <div class="code-block">
+                <button class="code-copy-btn">Copy</button>
+<pre>curl -X POST https://jjalb.ddmz.org/api/shorten \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com/very/long/path"}'</pre>
+            </div>
+            <div class="code-label">Response</div>
+            <div class="code-block">
+                <button class="code-copy-btn">Copy</button>
+<pre>{
+  "code": "aBcDeF",
+  "shortUrl": "https://jjalb.ddmz.org/aBcDeF",
+  "originalUrl": "https://example.com/very/long/path",
+  "author": null
+}</pre>
+            </div>
+        </section>
+
+        <section>
+            <div class="cards">
+                <div class="card">
+                    <a href="/docs">
+                        <h3>API Docs</h3>
+                        <p>Interactive API documentation powered by Scalar</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="https://github.com/ddingmin/jjalb" target="_blank" rel="noopener">
+                        <h3>GitHub</h3>
+                        <p>Source code and issue tracker</p>
+                    </a>
+                </div>
+                <div class="card card--soon">
+                    <h3>Dashboard <span class="badge badge--soon">Coming Soon</span></h3>
+                    <p>Click analytics and link statistics</p>
+                </div>
+                <div class="card card--soon">
+                    <h3>MCP Server <span class="badge badge--soon">Coming Soon</span></h3>
+                    <p>MCP server integration for AI agents</p>
+                </div>
+                <div class="card card--soon">
+                    <h3>Raycast Script <span class="badge badge--soon">Coming Soon</span></h3>
+                    <p>Create short links directly from Raycast</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>jjalb.ddmz.org</footer>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+        const root = document.documentElement;
+        const saved = localStorage.getItem('theme');
+        const system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        root.setAttribute('data-theme', saved || system);
+
+        function updateLabel() {
+            themeLabel.textContent = root.getAttribute('data-theme') === 'dark' ? 'Dark' : 'Light';
+        }
+        updateLabel();
+
+        themeToggle.addEventListener('click', () => {
+            const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateLabel();
+        });
+
+        // Shorten form
+        const form = document.getElementById('shortenForm');
+        const input = document.getElementById('urlInput');
+        const authorInput = document.getElementById('authorInput');
+        const btn = document.getElementById('shortenBtn');
+        const result = document.getElementById('shortenResult');
+        const shortLink = document.getElementById('shortLink');
+        const copyBtn = document.getElementById('copyBtn');
+        const error = document.getElementById('shortenError');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = '...';
+            result.classList.remove('visible');
+            error.classList.remove('visible');
+
+            try {
+                let url = input.value.trim();
+                if (!/^https?:\/\//i.test(url)) {
+                    url = 'https://' + url;
+                }
+                const author = authorInput.value.trim() || null;
+                const res = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, author })
+                });
+
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Failed to shorten URL');
+                }
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || 'Failed to shorten URL');
+                }
+
+                shortLink.href = data.shortUrl;
+                shortLink.textContent = data.shortUrl;
+                result.classList.add('visible');
+                copyBtn.textContent = 'Copy';
+                copyBtn.style.borderColor = '';
+                copyBtn.style.color = '';
+            } catch (err) {
+                error.textContent = err.message;
+                error.classList.add('visible');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Shorten';
+            }
+        });
+
+        // Copy handlers
+        function flashCopy(btn) {
+            const successColor = getComputedStyle(root).getPropertyValue('--link-success').trim();
+            btn.textContent = 'Copied!';
+            btn.style.borderColor = successColor;
+            btn.style.color = successColor;
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+            }, 1500);
+        }
+
+        document.querySelectorAll('.code-copy-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                const pre = b.closest('.code-block').querySelector('pre');
+                navigator.clipboard.writeText(pre.textContent).then(() => flashCopy(b));
+            });
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(shortLink.href).then(() => flashCopy(copyBtn));
+        });
+    </script>
+</body>
+</html>
