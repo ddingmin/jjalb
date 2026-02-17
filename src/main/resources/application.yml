@@ -28,11 +28,12 @@ management:
         enabled: true
 
 springdoc:
-  scalar:
-    enabled: true
-    path: /api/docs
   api-docs:
     path: /v3/api-docs
+
+scalar:
+  enabled: true
+  path: /docs
 
 app:
   base-url: ${APP_BASE_URL:http://localhost:8080}
