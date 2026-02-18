@@ -24,7 +24,7 @@ interface ClickRepository : CoroutineCrudRepository<Click, Long> {
     fun findTopReferrers(linkId: Long): Flow<ReferrerRow>
 
     @Query("""
-        SELECT user_agent AS "userAgent", COUNT(*) AS count
+        SELECT user_agent, COUNT(*) AS count
         FROM click WHERE link_id = :linkId AND user_agent IS NOT NULL
         GROUP BY user_agent ORDER BY count DESC LIMIT 10
     """)
@@ -33,4 +33,5 @@ interface ClickRepository : CoroutineCrudRepository<Click, Long> {
 
 data class DailyClickRow(val date: java.time.LocalDate, val count: Long)
 data class ReferrerRow(val referrer: String, val count: Long)
-data class UserAgentRow(val userAgent: String, val count: Long)
+@Suppress("PropertyName")
+data class UserAgentRow(val user_agent: String, val count: Long)

@@ -30,7 +30,7 @@ class StatsService(
             topReferrers = clickRepository.findTopReferrers(linkId)
                 .map { ReferrerCount(it.referrer, it.count) }.toList(),
             topUserAgents = clickRepository.findTopUserAgents(linkId)
-                .map { UserAgentCount(it.userAgent, it.count) }.toList()
+                .map { UserAgentCount(it.user_agent, it.count) }.toList()
         )
     }
 
