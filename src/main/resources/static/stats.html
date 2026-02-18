@@ -92,15 +92,50 @@
             font-weight: 700;
         }
 
-        .theme-toggle {
-            background: none;
-            border: 1px solid var(--border);
+        .theme-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .theme-label {
+            font-size: 0.75rem;
             color: var(--text-muted);
-            padding: 0.3rem 0.7rem;
-            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            user-select: none;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
             cursor: pointer;
-            font-size: 0.8rem;
-            font-family: inherit;
+            padding: 0;
+            transition: border-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--border-hover);
+        }
+
+        .theme-toggle .toggle-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        [data-theme="light"] .theme-toggle .toggle-knob {
+            transform: translateX(22px);
         }
 
         /* Tabs */
@@ -380,7 +415,12 @@
     <div class="container">
         <header>
             <a href="/">jjalb</a>
-            <button class="theme-toggle" id="themeToggle"><span id="themeLabel">Dark</span></button>
+            <div class="theme-toggle-wrap">
+                <span class="theme-label" id="themeLabel">Dark</span>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="toggle-knob"></span>
+                </button>
+            </div>
         </header>
 
         <div class="tabs">
