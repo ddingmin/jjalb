@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>jjalb - Stats</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --text-heading: #fff;
+            --text-muted: #888;
+            --text-faint: #666;
+            --surface: #141414;
+            --border: #2a2a2a;
+            --border-hover: #444;
+            --selection-bg: rgba(255, 255, 255, 0.15);
+            --selection-text: #fff;
+            --bar-fill: #fff;
+            --bar-bg: #1e1e1e;
+            --error: #f87171;
+            --scrollbar-thumb: #333;
+            color-scheme: dark;
+        }
+
+        :root[data-theme="light"] {
+            --bg: #fafafa;
+            --text: #333;
+            --text-heading: #111;
+            --text-muted: #666;
+            --text-faint: #999;
+            --surface: #fff;
+            --border: #e0e0e0;
+            --border-hover: #bbb;
+            --selection-bg: rgba(0, 0, 0, 0.12);
+            --selection-text: #000;
+            --bar-fill: #111;
+            --bar-bg: #f0f0f0;
+            --error: #dc2626;
+            --scrollbar-thumb: #ccc;
+            color-scheme: light;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::selection { background: var(--selection-bg); color: var(--selection-text); }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: var(--text-heading);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: inherit;
+        }
+
+        .meta {
+            margin-bottom: 2rem;
+            padding: 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .meta h2 {
+            font-size: 1rem;
+            color: var(--text-heading);
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .meta p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin: 1rem 0 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            margin-bottom: 1rem;
+        }
+
+        .bar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .bar-label {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text);
+        }
+
+        .bar-track {
+            width: 120px;
+            flex-shrink: 0;
+            height: 6px;
+            background: var(--bar-bg);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--bar-fill);
+            border-radius: 3px;
+        }
+
+        .bar-count {
+            width: 40px;
+            text-align: right;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 120px;
+            padding: 0.5rem 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            min-width: 4px;
+            background: var(--bar-fill);
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            cursor: default;
+        }
+
+        .chart-bar:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            color: var(--text);
+            z-index: 1;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-faint);
+            margin-top: 0.25rem;
+        }
+
+        .empty {
+            color: var(--text-faint);
+            font-size: 0.85rem;
+            padding: 1rem 0;
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.9rem;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .loading {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            color: var(--text-faint);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/">jjalb</a>
+            <button class="theme-toggle" id="themeToggle"><span id="themeLabel">Dark</span></button>
+        </header>
+
+        <div id="content">
+            <p class="loading">Loading...</p>
+        </div>
+    </div>
+
+    <footer>jjalb.ddmz.org</footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+        const root = document.documentElement;
+        const saved = localStorage.getItem('theme');
+        const system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        root.setAttribute('data-theme', saved || system);
+
+        function updateLabel() {
+            themeLabel.textContent = root.getAttribute('data-theme') === 'dark' ? 'Dark' : 'Light';
+        }
+        updateLabel();
+
+        themeToggle.addEventListener('click', () => {
+            const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateLabel();
+        });
+
+        const code = window.location.pathname.split('/stats/')[1];
+        const content = document.getElementById('content');
+
+        if (!code) {
+            content.innerHTML = '<p class="error-msg">No code provided. Use /stats/{code}</p>';
+        } else {
+            fetch(`/api/stats/${code}`)
+                .then(r => {
+                    if (!r.ok) throw new Error(r.status === 404 ? 'Link not found' : `Error ${r.status}`);
+                    return r.json();
+                })
+                .then(render)
+                .catch(e => {
+                    content.innerHTML = `<p class="error-msg">${e.message}</p>`;
+                });
+        }
+
+        function render(data) {
+            const authorLine = data.author ? `<p>Author: ${esc(data.author)}</p>` : '';
+            let html = `
+                <div class="meta">
+                    <h2>${esc(data.code)}</h2>
+                    <p>${esc(data.originalUrl)}</p>
+                    ${authorLine}
+                    <div class="stat-number">${data.totalClicks.toLocaleString()}</div>
+                    <div class="stat-label">Total Clicks</div>
+                </div>
+            `;
+
+            html += '<div class="section"><h3>Daily Clicks (Last 30 days)</h3>';
+            if (data.dailyClicks.length === 0) {
+                html += '<p class="empty">No click data yet</p>';
+            } else {
+                const sorted = [...data.dailyClicks].sort((a, b) => a.date.localeCompare(b.date));
+                const max = Math.max(...sorted.map(d => d.count));
+                html += '<div class="chart">';
+                sorted.forEach(d => {
+                    const h = max > 0 ? Math.max((d.count / max) * 100, 2) : 0;
+                    html += `<div class="chart-bar" style="height:${h}%" data-tooltip="${d.date}: ${d.count}"></div>`;
+                });
+                html += '</div>';
+                html += '<div class="chart-labels">';
+                html += `<span>${sorted[0].date}</span><span>${sorted[sorted.length - 1].date}</span>`;
+                html += '</div>';
+            }
+            html += '</div>';
+
+            html += renderBarList('Top Referrers', data.topReferrers, r => r.referrer, r => r.count);
+            html += renderBarList('Top User Agents', data.topUserAgents, r => r.userAgent, r => r.count);
+
+            content.innerHTML = html;
+        }
+
+        function renderBarList(title, items, labelFn, countFn) {
+            let html = `<div class="section"><h3>${title}</h3>`;
+            if (items.length === 0) {
+                html += '<p class="empty">No data</p>';
+            } else {
+                const max = Math.max(...items.map(countFn));
+                html += '<div class="bar-list">';
+                items.forEach(item => {
+                    const pct = max > 0 ? (countFn(item) / max) * 100 : 0;
+                    html += `
+                        <div class="bar-item">
+                            <span class="bar-label" title="${esc(labelFn(item))}">${esc(labelFn(item))}</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+                            <span class="bar-count">${countFn(item)}</span>
+                        </div>`;
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function esc(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+    </script>
+</body>
+</html>

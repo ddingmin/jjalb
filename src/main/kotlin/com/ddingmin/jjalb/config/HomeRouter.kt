@@ -17,5 +17,9 @@ class HomeRouter {
             ok().contentType(MediaType.TEXT_HTML)
                 .bodyValue(ClassPathResource("static/index.html"))
         }
+        GET("/stats/{code}") {
+            ok().contentType(MediaType.TEXT_HTML)
+                .bodyValue(ClassPathResource("static/stats.html"))
+        }
     }
 }
