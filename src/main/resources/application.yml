@@ -1,6 +1,11 @@
 spring:
   application:
     name: jjalb
+  ai:
+    mcp:
+      server:
+        name: jjalb
+        version: 1.0.0
 
   r2dbc:
     url: ${DB_URL:r2dbc:postgresql://localhost:5432/jjalb}

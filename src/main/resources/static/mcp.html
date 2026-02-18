@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>jjalb - MCP Server</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --text-heading: #fff;
+            --text-muted: #888;
+            --text-faint: #666;
+            --surface: #141414;
+            --surface-raised: #1a1a1a;
+            --border: #2a2a2a;
+            --border-hover: #444;
+            --border-focus: #555;
+            --selection-bg: rgba(255, 255, 255, 0.15);
+            --selection-text: #fff;
+            --code-bg: #141414;
+            --code-text: #c8c8c8;
+            --link: #93c5fd;
+            --scrollbar-thumb: #333;
+            color-scheme: dark;
+        }
+
+        :root[data-theme="light"] {
+            --bg: #fafafa;
+            --text: #333;
+            --text-heading: #111;
+            --text-muted: #666;
+            --text-faint: #999;
+            --surface: #fff;
+            --surface-raised: #f5f5f5;
+            --border: #e0e0e0;
+            --border-hover: #bbb;
+            --border-focus: #999;
+            --selection-bg: rgba(0, 0, 0, 0.12);
+            --selection-text: #000;
+            --code-bg: #f5f5f5;
+            --code-text: #444;
+            --link: #2563eb;
+            --scrollbar-thumb: #ccc;
+            color-scheme: light;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::selection { background: var(--selection-bg); color: var(--selection-text); }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: var(--text-heading);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .theme-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .theme-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            user-select: none;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            cursor: pointer;
+            padding: 0;
+            transition: border-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--border-hover);
+        }
+
+        .theme-toggle .toggle-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        [data-theme="light"] .theme-toggle .toggle-knob {
+            transform: translateX(22px);
+        }
+
+        section {
+            margin-bottom: 2.5rem;
+        }
+
+        section h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        p.muted {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        a { color: var(--link); }
+
+        .code-block {
+            position: relative;
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .code-block:hover {
+            border-color: var(--scrollbar-thumb);
+        }
+
+        .code-block::-webkit-scrollbar { height: 6px; }
+        .code-block::-webkit-scrollbar-track { background: transparent; }
+        .code-block::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+        .code-block pre {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--code-text);
+            white-space: pre;
+        }
+
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            color: var(--text-faint);
+            font-family: inherit;
+            font-size: 0.7rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s, border-color 0.2s, color 0.2s;
+        }
+
+        .code-block:hover .code-copy-btn { opacity: 1; }
+
+        .code-copy-btn:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+
+        .code-label {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tool-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tool-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            margin-bottom: 0.4rem;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+        }
+
+        .tool-card p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card .params {
+            font-size: 0.8rem;
+            color: var(--text-faint);
+        }
+
+        .tool-card .params code {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            color: var(--code-text);
+        }
+
+        .endpoint-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .endpoint-box code {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-heading);
+        }
+
+        .endpoint-copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 0.75rem;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .endpoint-copy-btn:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            color: var(--text-faint);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/">jjalb</a>
+            <div class="theme-toggle-wrap">
+                <span class="theme-label" id="themeLabel">Dark</span>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="toggle-knob"></span>
+                </button>
+            </div>
+        </header>
+
+        <section>
+            <h2>MCP Server</h2>
+            <p>
+                jjalb provides an <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP (Model Context Protocol)</a> server
+                that allows AI agents to shorten URLs and retrieve click statistics through tool calls.
+            </p>
+            <p class="muted">
+                MCP is an open protocol that standardizes how AI applications interact with external tools and data sources.
+                Compatible clients include Claude Desktop, Cursor, Windsurf, and other MCP-enabled applications.
+            </p>
+        </section>
+
+        <section>
+            <h2>Endpoint</h2>
+            <p class="muted">Connect your MCP client to the SSE endpoint:</p>
+            <div class="endpoint-box">
+                <code id="endpointUrl">https://jjalb.ddmz.org/sse</code>
+                <button class="endpoint-copy-btn" id="endpointCopyBtn">Copy</button>
+            </div>
+        </section>
+
+        <section>
+            <h2>Available Tools</h2>
+
+            <div class="tool-card">
+                <h3>shortenUrl</h3>
+                <p>Shorten a URL and return the short link.</p>
+                <div class="params">
+                    <code>url</code> (string, required) — The URL to shorten<br>
+                    <code>author</code> (string, optional) — Author name for the link
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <h3>getStats</h3>
+                <p>Get click statistics for a short code. Returns total clicks, daily clicks, top referrers, and top user agents.</p>
+                <div class="params">
+                    <code>code</code> (string, required) — The short code to look up
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Client Configuration</h2>
+
+            <div class="code-label">Claude Desktop</div>
+            <p class="muted">Add to <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> (macOS) or <code>%APPDATA%\Claude\claude_desktop_config.json</code> (Windows):</p>
+            <div class="code-block">
+                <button class="code-copy-btn">Copy</button>
+<pre>{
+  "mcpServers": {
+    "jjalb": {
+      "url": "https://jjalb.ddmz.org/sse"
+    }
+  }
+}</pre>
+            </div>
+
+            <div class="code-label">Cursor</div>
+            <p class="muted">Add to <code>.cursor/mcp.json</code> in your project root:</p>
+            <div class="code-block">
+                <button class="code-copy-btn">Copy</button>
+<pre>{
+  "mcpServers": {
+    "jjalb": {
+      "url": "https://jjalb.ddmz.org/sse"
+    }
+  }
+}</pre>
+            </div>
+
+            <div class="code-label">Claude Code</div>
+            <p class="muted">Run the following command:</p>
+            <div class="code-block">
+                <button class="code-copy-btn">Copy</button>
+<pre>claude mcp add jjalb https://jjalb.ddmz.org/sse</pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Example</h2>
+            <p class="muted">Once configured, you can ask your AI agent:</p>
+            <div class="code-block">
+<pre>"Shorten this URL: https://example.com/very/long/path"
+"Show me the click stats for code aBcDeF"</pre>
+            </div>
+        </section>
+    </div>
+
+    <footer>jjalb.ddmz.org</footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+        const root = document.documentElement;
+        const saved = localStorage.getItem('theme');
+        const system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        root.setAttribute('data-theme', saved || system);
+
+        function updateLabel() {
+            themeLabel.textContent = root.getAttribute('data-theme') === 'dark' ? 'Dark' : 'Light';
+        }
+        updateLabel();
+
+        themeToggle.addEventListener('click', () => {
+            const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateLabel();
+        });
+
+        // Copy handlers
+        function flashCopy(btn) {
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+        }
+
+        document.querySelectorAll('.code-copy-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                const pre = b.closest('.code-block').querySelector('pre');
+                navigator.clipboard.writeText(pre.textContent).then(() => flashCopy(b));
+            });
+        });
+
+        document.getElementById('endpointCopyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(document.getElementById('endpointUrl').textContent)
+                .then(() => flashCopy(document.getElementById('endpointCopyBtn')));
+        });
+    </script>
+</body>
+</html>

@@ -17,6 +17,10 @@ class HomeRouter {
             ok().contentType(MediaType.TEXT_HTML)
                 .bodyValue(ClassPathResource("static/index.html"))
         }
+        GET("/mcp") {
+            ok().contentType(MediaType.TEXT_HTML)
+                .bodyValue(ClassPathResource("static/mcp.html"))
+        }
         GET("/stats") {
             ok().contentType(MediaType.TEXT_HTML)
                 .bodyValue(ClassPathResource("static/stats.html"))
