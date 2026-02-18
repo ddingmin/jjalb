@@ -12,7 +12,9 @@ data class ShortenResponse(
     @Schema(description = "원본 URL", example = "https://example.com/very/long/path")
     val originalUrl: String,
     @Schema(description = "작성자", example = "ddingmin", nullable = true)
-    val author: String? = null
+    val author: String? = null,
+    @Schema(description = "통계 페이지 URL", example = "http://localhost:8080/stats/aBcDeF")
+    val statsUrl: String
 ) {
 
     companion object {
@@ -22,7 +24,8 @@ data class ShortenResponse(
                 code = code,
                 shortUrl = "$baseUrl/$code",
                 originalUrl = link.originalUrl,
-                author = link.author
+                author = link.author,
+                statsUrl = "$baseUrl/stats/$code"
             )
         }
     }

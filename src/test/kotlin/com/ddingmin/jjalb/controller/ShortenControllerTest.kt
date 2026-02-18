@@ -36,6 +36,7 @@ class ShortenControllerTest {
             .jsonPath("$.code").isEqualTo("Xr04lY")
             .jsonPath("$.originalUrl").isEqualTo("https://google.com")
             .jsonPath("$.shortUrl").exists()
+            .jsonPath("$.statsUrl").exists()
     }
 
     @Test
