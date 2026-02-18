@@ -15,3 +15,16 @@ data class StatsResponse(
 data class DailyClick(val date: LocalDate, val count: Long)
 data class ReferrerCount(val referrer: String, val count: Long)
 data class UserAgentCount(val userAgent: String, val count: Long)
+
+data class LinkStatsItem(
+    val code: String,
+    val originalUrl: String,
+    val author: String?,
+    val totalClicks: Long,
+    val createdAt: LocalDate
+)
+
+data class LinkListStatsResponse(
+    val links: List<LinkStatsItem>,
+    val totalClicks: Long
+)
