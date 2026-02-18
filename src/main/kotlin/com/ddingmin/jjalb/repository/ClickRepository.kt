@@ -24,7 +24,7 @@ interface ClickRepository : CoroutineCrudRepository<Click, Long> {
     fun findTopReferrers(linkId: Long): Flow<ReferrerRow>
 
     @Query("""
-        SELECT user_agent AS userAgent, COUNT(*) AS count
+        SELECT user_agent AS "userAgent", COUNT(*) AS count
         FROM click WHERE link_id = :linkId AND user_agent IS NOT NULL
         GROUP BY user_agent ORDER BY count DESC LIMIT 10
     """)
